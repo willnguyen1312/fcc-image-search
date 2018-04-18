@@ -1,0 +1,40 @@
+{
+  "name": "fcc_image_search",
+  "description": "My solution to Freecodecamp image search challenge",
+  "keywords": [
+    "koa",
+    "koa2",
+    "boilerplate",
+    "api",
+    "es6"
+  ],
+  "author": "Nam Nguyen",
+  "license": "MIT",
+  "version": "1.1.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index",
+    "start": "cross-env NODE_ENVIRONMENT=production node ."
+  },
+  "dependencies": {
+    "@koa/cors": "2.2.1",
+    "cross-env": "^5.1.4",
+    "dotenv": "^5.0.1",
+    "invariant": "^2.2.4",
+    "joi": "^13.2.0",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-compress": "^3.0.0",
+    "koa-helmet": "^4.0.0",
+    "koa-logger": "^3.2.0",
+    "koa-respond": "^1.0.1",
+    "koa-router": "^7.4.0",
+    "lodash": "^4.17.5",
+    "moment": "^2.22.1",
+    "mongoose": "^5.0.15",
+    "node-bing-api": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.3"
+  }
+}
