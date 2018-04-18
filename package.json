@@ -21,7 +21,6 @@
     "cross-env": "^5.1.4",
     "dotenv": "^5.0.1",
     "invariant": "^2.2.4",
-    "joi": "^13.2.0",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-compress": "^3.0.0",

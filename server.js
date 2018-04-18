@@ -15,7 +15,7 @@ const Bing = require("node-bing-api")({
 // MONGOOSE CONNECT
 // ===========================================================================
 if (process.env.NODE_ENV === "production") {
-  // mongoose.connect("mongodb://admin:admin@ds129143.mlab.com:29143/milktea");
+  mongoose.connect(process.env.MONGOURI);
 } else {
   mongoose.connect("mongodb://localhost:27017/searchTerm");
 }
@@ -38,7 +38,7 @@ app.use(
     enableTypes: ["json"],
     jsonLimit: "5mb",
     strict: true,
-    onerror: function(err, ctx) {
+    onerror: function (err, ctx) {
       ctx.throw("body parse error", 422);
     }
   })
@@ -50,8 +50,14 @@ app.use(respond());
 
 // New search
 router.get("/api/imagesearch/:searchQuery", async ctx => {
-  const { searchQuery } = ctx.params;
-  const { query } = ctx.request;
+  const {
+    searchQuery
+  } = ctx.params;
+  const {
+    query: {
+      offset = 0
+    }
+  } = ctx.request;
 
   const data = new SearchQueryModel({
     searchQuery,
@@ -65,16 +71,31 @@ router.get("/api/imagesearch/:searchQuery", async ctx => {
     }
   });
 
-  let result;
-
   return new Promise((resolve, reject) => {
     Bing.images(
-      searchQuery,
-      {
-        top: 10
+      searchQuery, {
+        count: 10,
+        offset
       },
       (err, result, body) => {
-        ctx.body = body.value;
+        const data = [];
+        const {
+          value
+        } = body;
+
+        for (const item of value) {
+          const {
+            name: altText,
+            contentUrl: imageUrl,
+            hostPageUrl: pageUrl
+          } = item;
+          data.push({
+            altText,
+            imageUrl,
+            pageUrl
+          });
+        }
+        ctx.body = data;
         resolve();
       }
     );
@@ -84,7 +105,37 @@ router.get("/api/imagesearch/:searchQuery", async ctx => {
 // Get recent search
 router.get("/api/recentsearchs", async ctx => {
   const data = await SearchQueryModel.findOne({});
-  ctx.body = data;
+  const {
+    searchQuery
+  } = data
+  return new Promise((resolve, reject) => {
+    Bing.images(
+      searchQuery, {
+        count: 10,
+      },
+      (err, result, body) => {
+        const data = [];
+        const {
+          value
+        } = body;
+
+        for (const item of value) {
+          const {
+            name: altText,
+            contentUrl: imageUrl,
+            hostPageUrl: pageUrl
+          } = item;
+          data.push({
+            altText,
+            imageUrl,
+            pageUrl
+          });
+        }
+        ctx.body = data;
+        resolve();
+      }
+    );
+  });
 });
 
 router.get("/*", ctx => {
