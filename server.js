@@ -38,7 +38,7 @@ app.use(
     enableTypes: ["json"],
     jsonLimit: "5mb",
     strict: true,
-    onerror: function (err, ctx) {
+    onerror: function(err, ctx) {
       ctx.throw("body parse error", 422);
     }
   })
@@ -50,13 +50,9 @@ app.use(respond());
 
 // New search
 router.get("/api/imagesearch/:searchQuery", async ctx => {
+  const { searchQuery } = ctx.params;
   const {
-    searchQuery
-  } = ctx.params;
-  const {
-    query: {
-      offset = 0
-    }
+    query: { offset = 0 }
   } = ctx.request;
 
   const data = new SearchQueryModel({
@@ -73,15 +69,14 @@ router.get("/api/imagesearch/:searchQuery", async ctx => {
 
   return new Promise((resolve, reject) => {
     Bing.images(
-      searchQuery, {
+      searchQuery,
+      {
         count: 10,
         offset
       },
       (err, result, body) => {
         const data = [];
-        const {
-          value
-        } = body;
+        const { value } = body;
 
         for (const item of value) {
           const {
@@ -105,19 +100,16 @@ router.get("/api/imagesearch/:searchQuery", async ctx => {
 // Get recent search
 router.get("/api/recentsearchs", async ctx => {
   const data = await SearchQueryModel.findOne({});
-  const {
-    searchQuery
-  } = data
+  const { searchQuery } = data;
   return new Promise((resolve, reject) => {
     Bing.images(
-      searchQuery, {
-        count: 10,
+      searchQuery,
+      {
+        count: 10
       },
       (err, result, body) => {
         const data = [];
-        const {
-          value
-        } = body;
+        const { value } = body;
 
         for (const item of value) {
           const {
@@ -139,7 +131,7 @@ router.get("/api/recentsearchs", async ctx => {
 });
 
 router.get("/*", ctx => {
-  ctx.body = `Sorry, please modify the url to get your yummy result :)`;
+  ctx.body = `Sorry, please modify the url to get your yummy result :) Try */api/imagesearch/{keywork}?offset={number} or latest search with */api/recentsearchs`;
 });
 
 app.use(router.routes());
